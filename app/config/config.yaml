@@ -1,0 +1,23 @@
+lottie_url1: "https://lottie.host/f89e48e2-55e5-4fdf-a406-0be2b00cc2af/ECJa6PGrCV.json"
+lottie_url2: "https://lottie.host/05824020-0a23-4373-8418-721bd6e68504/FE5XXRT455.json"
+welcome_template: "InsightFlow Analyst 🪄 是一个由大语言模型驱动的先进应用程序，它简化了整个数据分析流程，集成了两大核心功能：**数据探索与可视化**和**智能数据分析助手**。它自动化了从数据预处理到模型测试的所有任务，以精确的方式简化复杂的数据分析任务。\n告别繁琐的数据任务，让 InsightFlow Analyst 施展魔法吧！✨"
+introduction_template1: |
+  作为数据分析助手，**Streamline Analyst** 能够基于您的数据做出自主决策： 
+  
+  **📊 数据探索与可视化**  
+  - 自动生成专业图表  
+  - 交互式数据探索  
+  - 多维度数据展示 
+
+  **💬 智能数据分析助手**  
+  - 自然语言交互，轻松提问  
+  - 自动数据洞察与解释  
+  - 智能建议与预测分析 
+
+  以及更多的智能功能...
+introduction_template2: |
+  **您只需要**：
+  1. **上传**您的数据文件
+  2. **选择**分析模式
+  3. **点击**开始按钮
+  4. **获取**专业分析与可视化结果
