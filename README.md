@@ -57,4 +57,4 @@ streamlit run /your_path_to_the_project/app/app.py
 ---
 
 ## 示例数据
-在 data 文件夹中，您可以找到用于测试的示例数据集。可以直接上传这些示例数据进行分析
+在 sample_data 文件夹中，您可以找到用于测试的示例数据集，可以直接上传这些示例数据进行分析。
