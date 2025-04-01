@@ -7,7 +7,9 @@ from cluster_model import cluster_model_pipeline
 from regression_model import regression_model_pipeline
 from visualization import data_visualization
 from src.util import read_file_from_streamlit
-from summary.qa_agent import create_qa_agent, get_agent_response
+from summary.qa_agent import create_qa_agent, get_agent_response, generate_md_report
+import io
+
 
 st.set_page_config(page_title="InsightFlow Analyst", page_icon=":rocket:", layout="wide")
 
@@ -126,6 +128,8 @@ with st.container():
         st.session_state.qa_button_clicked = False
     if 'messages' not in st.session_state:
         st.session_state.messages = []
+    if 'qa_history' not in st.session_state:
+        st.session_state.qa_history = []  # 存储用户的问答历史
         
     # Q&A specific controls
     qa_left, qa_right = st.columns([6, 4])
@@ -189,6 +193,9 @@ with st.container():
                             response = get_agent_response(st.session_state.qa_agent, prompt)
                             st.markdown(response)
                             st.session_state.messages.append({"role": "assistant", "content": response})
+
+                            # 记录问答历史
+                            st.session_state.qa_history.append({"question": prompt, "answer": response})
         
         with right_column:
             st.subheader("💡 提示")
@@ -202,9 +209,23 @@ with st.container():
             - 异常值检测
             - 数据可视化请求
             """)
-            
+
             # Clear chat history button
             if st.button("🗑️ 清除聊天记录", key="clear_chat"):
                 st.session_state.messages = []
+                st.session_state.qa_history = []  # 清空问答历史
                 st.rerun()
-    
+            
+            # 生成 Markdown 报告并提供下载
+            if st.session_state.qa_history:
+                md_report = generate_md_report()
+                if md_report:
+                    md_bytes = md_report.encode("utf-8")
+                    md_io = io.BytesIO(md_bytes)
+                    st.download_button(
+                        label="📥 下载 Markdown 报告",
+                        data=md_io,
+                        file_name="data_analysis_report.md",
+                        mime="text/markdown",
+                        key="download_report"
+                    )
