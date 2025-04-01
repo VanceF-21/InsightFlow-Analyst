@@ -98,7 +98,6 @@ with st.container():
 
     # Start Analysis
     if st.session_state.button_clicked:
-        # GPT_MODEL = 4 if SELECTED_MODEL == 'GPT-4-Turbo' else 3.5
         if SELECTED_MODEL == "GPT-4":
             GPT_MODEL = 4
         elif SELECTED_MODEL == "GPT-3.5-Turbo":
@@ -218,7 +217,7 @@ with st.container():
             
             # 生成 Markdown 报告并提供下载
             if st.session_state.qa_history:
-                md_report = generate_md_report()
+                md_report = generate_md_report(st.session_state.qa_df, st.session_state.qa_history)
                 if md_report:
                     md_bytes = md_report.encode("utf-8")
                     md_io = io.BytesIO(md_bytes)
