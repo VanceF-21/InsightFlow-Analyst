@@ -95,7 +95,8 @@ def decide_fill_null(attributes, types_info, description_info, model_type = 4, u
         else: json_str = llm_answer.content
         return json.loads(json_str)
     except Exception as e:
-        st.error("Cannot access the OpenAI API. Please check your API key or network connection.")
+        # st.error("Cannot access the OpenAI API. Please check your API key or network connection.")
+        st.error("不能访问OpenAI API。请检查您的API密钥或网络连接。")
         st.stop()
 
 def decide_model(shape_info, head_info, nunique_info, description_info, model_type = 4, user_api_key = None):
@@ -138,7 +139,8 @@ def decide_model(shape_info, head_info, nunique_info, description_info, model_ty
         else: json_str = llm_answer.content
         return json.loads(json_str)
     except Exception as e:
-        st.error("Cannot access the OpenAI API. Please check your API key or network connection.")
+        # st.error("Cannot access the OpenAI API. Please check your API key or network connection.")
+        st.error("不能访问OpenAI API。请检查您的API密钥或网络连接。")
         st.stop()
 
 def decide_cluster_model(shape_info, description_info, cluster_info, model_type = 4, user_api_key = None):
@@ -180,7 +182,8 @@ def decide_cluster_model(shape_info, description_info, cluster_info, model_type 
         else: json_str = llm_answer.content
         return json.loads(json_str)
     except Exception as e:
-        st.error("Cannot access the OpenAI API. Please check your API key or network connection.")
+        # st.error("Cannot access the OpenAI API. Please check your API key or network connection.")
+        st.error("不能访问OpenAI API。请检查您的API密钥或网络连接。")
         st.stop()
 
 def decide_regression_model(shape_info, description_info, Y_name, model_type = 4, user_api_key = None):
@@ -222,7 +225,8 @@ def decide_regression_model(shape_info, description_info, Y_name, model_type = 4
         else: json_str = llm_answer.content
         return json.loads(json_str)
     except Exception as e:
-        st.error("Cannot access the OpenAI API. Please check your API key or network connection.")
+        # st.error("Cannot access the OpenAI API. Please check your API key or network connection.")
+        st.error("不能访问OpenAI API。请检查您的API密钥或网络连接。")
         st.stop()
 
 def decide_target_attribute(attributes, types_info, head_info, model_type = 4, user_api_key = None):
@@ -264,7 +268,8 @@ def decide_target_attribute(attributes, types_info, head_info, model_type = 4, u
         else: json_str = llm_answer.content
         return json.loads(json_str)["target"]
     except Exception as e:
-        st.error("Cannot access the OpenAI API. Please check your API key or network connection.")
+        # st.error("Cannot access the OpenAI API. Please check your API key or network connection.")
+        st.error("不能访问OpenAI API。请检查您的API密钥或网络连接。")
         st.stop()
 
 def decide_test_ratio(shape_info, model_type = 4, user_api_key = None):
@@ -304,7 +309,8 @@ def decide_test_ratio(shape_info, model_type = 4, user_api_key = None):
         else: json_str = llm_answer.content
         return json.loads(json_str)["test_ratio"]
     except Exception as e:
-        st.error("Cannot access the OpenAI API. Please check your API key or network connection.")
+        # st.error("Cannot access the OpenAI API. Please check your API key or network connection.")
+        st.error("不能访问OpenAI API。请检查您的API密钥或网络连接。")
         st.stop()
 
 def decide_balance(shape_info, description_info, balance_info, model_type = 4, user_api_key = None):
@@ -346,5 +352,6 @@ def decide_balance(shape_info, description_info, balance_info, model_type = 4, u
         else: json_str = llm_answer.content
         return json.loads(json_str)["method"]
     except Exception as e:
-        st.error("Cannot access the OpenAI API. Please check your API key or network connection.")
+        # st.error("Cannot access the OpenAI API. Please check your API key or network connection.")
+        st.error("不能访问OpenAI API。请检查您的API密钥或网络连接。")
         st.stop()

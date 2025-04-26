@@ -1,8 +1,22 @@
 from langchain_experimental.agents import create_pandas_dataframe_agent
 from langchain_openai import ChatOpenAI
 from langchain.agents.agent_types import AgentType
+from langchain.tools import Tool
+from langchain.memory import ConversationBufferMemory
+
 import datetime
 import streamlit as st
+import pandas as pd
+
+
+from summary.tools import (
+    create_boxplot_tool,
+    create_histogram_tool,
+    create_heatmap_tool,
+    create_pie_chart_tool,
+    create_scatter_plot_tool,
+)
+
 
 OPENAI_BASE_URL="https://api.openai-proxy.org/v1"
 def create_qa_agent(df, api_key, model_version=4.5):
@@ -19,13 +33,46 @@ def create_qa_agent(df, api_key, model_version=4.5):
         api_key=api_key,
         base_url=OPENAI_BASE_URL
     )
+
+    # # 创建可视化工具
+    # tools = [
+    #     Tool(
+    #         name="boxplot",
+    #         func=lambda column_name: create_boxplot_tool(df)(column_name),
+    #         description="生成箱线图"
+    #     ),
+    #     Tool(
+    #         name="histogram",
+    #         func=lambda column_name: create_histogram_tool(df)(column_name),
+    #         description="生成直方图"
+    #     ),
+    #     Tool(
+    #         name="heatmap",
+    #         func=lambda: create_heatmap_tool(df)(),
+    #         description="生成热力图"
+    #     ),
+    #     Tool(
+    #         name="pie_chart",
+    #         func=lambda column_name: create_pie_chart_tool(df)(column_name),
+    #         description="生成饼图"
+    #     ),
+    #     Tool(
+    #         name="scatter_plot",
+    #         func=lambda x_column, y_column: create_scatter_plot_tool(df)(x_column, y_column),
+    #         description="生成散点图"
+    #     )
+    # ]
     
+    memory = ConversationBufferMemory(memory_key="chat_history")
+
     agent = create_pandas_dataframe_agent(
         llm,
         df,
         verbose=True,
         agent_type=AgentType.OPENAI_FUNCTIONS,
         allow_dangerous_code=True,
+        # extra_tools=tools,
+        memory=memory,
     )
     
     return agent
@@ -37,11 +84,6 @@ def get_agent_response(agent, query):
         return response
     except Exception as e:
         return f"抱歉，处理您的问题时出现错误：{str(e)}" 
-    
-
-import pandas as pd
-import streamlit as st
-import datetime
 
 def generate_md_report(df, qa_history):
     """生成包含文件背景、数据统计、问答和总结的 Markdown 格式报告"""

@@ -13,11 +13,11 @@ def display_word_cloud(text):
 
 def data_visualization(DF):
     st.divider()
-    st.subheader('Data Visualization')
+    st.subheader('数据可视化')
     attributes = DF.columns.tolist()
 
     # Three tabs for three kinds of visualization
-    single_tab, multiple_tab, advanced_tab = st.tabs(['Single Attribute Visualization', 'Multiple Attributes Visualization', 'Advanced Visualization'])
+    single_tab, multiple_tab, advanced_tab = st.tabs(['单属性可视化', '多属性可视化', '先进的可视化'])
     
     # Single attribute visualization
     with single_tab:
@@ -32,7 +32,7 @@ def data_visualization(DF):
                 options = attributes,
                 index = len(attributes)-1
             )
-            st.write(f'Attribute selected: :green[{att}]')
+            st.write(f'选择的属性: :green[{att}]')
             
         with col2:
             plot_types = ['Donut chart', 'Violin plot', 'Distribution histogram', 'Boxplot', 'Density plot', 'Strip plot', 'Distribution boxplot']
@@ -42,7 +42,7 @@ def data_visualization(DF):
                 options = plot_types,
                 index = 0
             )
-            st.write(f'Plot type selected: :green[{plot_type}]')
+            st.write(f'选择的图类型: :green[{plot_type}]')
 
         if plot_type == 'Distribution histogram':
             fig = distribution_histogram(DF, att)
@@ -132,7 +132,7 @@ def data_visualization(DF):
 
     # Advanced visualization
     with advanced_tab:
-        st.subheader("3D Scatter Plot")
+        st.subheader("3D Scatter图")
         column_1, column_2, column_3 = st.columns(3)
         with column_1:
             x = st.selectbox(
@@ -165,8 +165,8 @@ def data_visualization(DF):
                     st.plotly_chart(fig_3d_1)
         st.divider()
 
-        st.subheader('World Cloud')
-        upload_txt_checkbox = st.checkbox('Upload a new text file instead')
+        st.subheader('Word Cloud')
+        upload_txt_checkbox = st.checkbox('另外上传文本文件以生成词云')
         if upload_txt_checkbox:
             uploaded_txt = st.file_uploader("Choose a text file", accept_multiple_files=False, type="txt")
             if uploaded_txt: 
@@ -177,12 +177,12 @@ def data_visualization(DF):
                 label = 'Select the text attribute:',
                 options = attributes,
                 index = 0)
-            if st.button('Generate Word Cloud'):
+            if st.button('生成Word Cloud'):
                 text = DF[text_attr].astype(str).str.cat(sep=' ')
                 display_word_cloud(text)
         st.divider()
 
-        st.subheader('World Heat Map')
+        st.subheader('世界热力图')
         col_1, col_2 = st.columns(2)
         with col_1:
             country_col = st.selectbox(
@@ -209,7 +209,7 @@ def data_visualization(DF):
     st.divider()
 
     # Data Overview
-    st.subheader('Data Overview')
+    st.subheader('数据概览')
     if 'data_origin' not in st.session_state:
         st.session_state.data_origin = DF
     st.dataframe(st.session_state.data_origin.describe(), width=1200)

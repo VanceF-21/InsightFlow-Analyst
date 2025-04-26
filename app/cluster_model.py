@@ -14,25 +14,25 @@ def start_training_model():
 
 def cluster_model_pipeline(DF, API_KEY, GPT_MODEL):
     st.divider()
-    st.subheader('Data Overview')
+    st.subheader('数据概览')
     if 'data_origin' not in st.session_state:
         st.session_state.data_origin = DF
     st.dataframe(st.session_state.data_origin.describe(), width=1200)
     
     # Data Imputation
-    st.subheader('Handle and Impute Missing Values')
+    st.subheader('处理和填补缺失值')
     if "contain_null" not in st.session_state:
         st.session_state.contain_null = contains_missing_value(st.session_state.data_origin)
 
     if 'filled_df' not in st.session_state:
         if st.session_state.contain_null:
             with st.status("Processing **missing values** in the data...", expanded=True) as status:
-                st.write("Filtering out high-frequency missing rows and columns...")
+                st.write("正在过滤高频缺失的行和列...")
                 filled_df = remove_high_null(DF)
-                st.write("Large language model analysis...")
+                st.write("LLM正在分析...")
                 attributes, types_info, description_info = contain_null_attributes_info(filled_df)
                 fill_result_dict = decide_fill_null(attributes, types_info, description_info, GPT_MODEL, API_KEY)
-                st.write("Imputing missing values...")
+                st.write("正在填补缺失值...")
                 mean_list, median_list, mode_list, new_category_list, interpolation_list = separate_fill_null_list(fill_result_dict)
                 filled_df = fill_null_values(filled_df, mean_list, median_list, mode_list, new_category_list, interpolation_list)
                 # Store the imputed DataFrame in session_state
@@ -46,9 +46,9 @@ def cluster_model_pipeline(DF, API_KEY, GPT_MODEL):
                 mime='text/csv')
         else:
             st.session_state.filled_df = DF
-            st.success("No missing values detected. Processing skipped.")
+            st.success("没有被检测到的缺失值存在，跳过该过程。")
     else:
-        st.success("Missing value processing completed!")
+        st.success("缺失值处理已完成！")
         if st.session_state.contain_null:
             st.download_button(
                 label="Download Data with Missing Values Imputed",
@@ -57,8 +57,8 @@ def cluster_model_pipeline(DF, API_KEY, GPT_MODEL):
                 mime='text/csv')
 
     # Data Encoding
-    st.subheader("Process Data Encoding")
-    st.caption("*For considerations of processing time, **NLP features** like **TF-IDF** have not been included in the current pipeline, long text attributes may be dropped.")
+    st.subheader("处理数据编码")
+    st.caption("*为了处理时间的考虑，当前管道中未包含**NLP特征**如**TF-IDF**，长文本属性可能会被丢弃。")
     if 'all_numeric' not in st.session_state:
         st.session_state.all_numeric = check_all_columns_numeric(st.session_state.data_origin)
     
@@ -66,9 +66,9 @@ def cluster_model_pipeline(DF, API_KEY, GPT_MODEL):
         if not st.session_state.all_numeric:
             with st.status("Encoding non-numeric data using **numeric mapping** and **one-hot**...", expanded=True) as status:
                 non_numeric_attributes, non_numeric_head = non_numeric_columns_and_head(DF)
-                st.write("Large language model analysis...")
+                st.write("LLM正在分析...")
                 encode_result_dict = decide_encode_type(non_numeric_attributes, non_numeric_head, GPT_MODEL, API_KEY)
-                st.write("Encoding the data...")
+                st.write("正在编码数据...")
                 convert_int_cols, one_hot_cols, drop_cols = separate_decode_list(encode_result_dict, "")
                 encoded_df, mappings = convert_to_numeric(DF, convert_int_cols, one_hot_cols, drop_cols)
                 # Store the imputed DataFrame in session_state
@@ -82,9 +82,9 @@ def cluster_model_pipeline(DF, API_KEY, GPT_MODEL):
                 mime='text/csv')
         else:
             st.session_state.encoded_df = DF
-            st.success("All columns are numeric. Processing skipped.")
+            st.success("所有列都是数值的，跳过处理!")
     else:
-        st.success("Data encoded completed using numeric mapping and one-hot!")
+        st.success("使用数值映射和独热编码处理数据完成!")
         if not st.session_state.all_numeric:
             st.download_button(
                 label="Download Encoded Data",
@@ -95,25 +95,25 @@ def cluster_model_pipeline(DF, API_KEY, GPT_MODEL):
     # Correlation Heatmap
     if 'df_cleaned1' not in st.session_state:
         st.session_state.df_cleaned1 = DF
-    st.subheader('Correlation Between Attributes')
+    st.subheader('属性之间的相关性')
     st.plotly_chart(correlation_matrix_plotly(st.session_state.df_cleaned1))
 
     # Remove duplicate entities
-    st.subheader('Remove Duplicate Entities')
+    st.subheader('删除重复实体')
     if 'df_cleaned2' not in st.session_state:
         st.session_state.df_cleaned2 = remove_duplicates(st.session_state.df_cleaned1)
         # DF = remove_duplicates(DF)
-    st.info("Duplicate rows removed.")
+    st.info("重复的行已删除。")
 
     # Data Transformation
-    st.subheader('Data Transformation')
+    st.subheader('数据转换')
     if 'data_transformed' not in st.session_state:
         st.session_state.data_transformed = transform_data_for_clustering(st.session_state.df_cleaned2)
-    st.success("Data transformed by standardization and box-cox if applicable.")
+    st.success("如果需要，数据已进行标准化和Box-Cox变换。")
     
     # PCA
     st.subheader('Principal Component Analysis')
-    st.write("Deciding whether to perform PCA...")
+    st.write("正在决定是否进行PCA...")
     if 'df_pca' not in st.session_state:
         _, n_components = decide_pca(st.session_state.df_cleaned2)
         st.session_state.df_pca = perform_PCA_for_clustering(st.session_state.data_transformed, n_components)
@@ -131,21 +131,21 @@ def cluster_model_pipeline(DF, API_KEY, GPT_MODEL):
 
     splitting_column, balance_column = st.columns(2)
     with splitting_column:
-        st.subheader(':grey[Data Splitting]')
-        st.caption('Data splitting is not applicable to clustering models.')
-        st.slider('Percentage of test set', 1, 25, st.session_state.test_percentage, key='test_percentage', disabled=True)
+        st.subheader(':grey[数据分割]')
+        st.caption('数据分割不适用于聚类模型。')
+        st.slider('测试集的比例', 1, 25, st.session_state.test_percentage, key='test_percentage', disabled=True)
     
     with balance_column:
         st.metric(label="Test Data", value="--%", delta=None)
         st.toggle('Class Balancing', value=st.session_state.balance_data, key='to_perform_balance', disabled=True)
         st.caption('Class balancing is not applicable to clustering models.')
     
-    st.button("Start Training Model", on_click=start_training_model, type="primary", disabled=st.session_state['start_training'])
+    st.button("开始训练模型", on_click=start_training_model, type="primary", disabled=st.session_state['start_training'])
 
     # Model Training
     if st.session_state['start_training']:
         with st.container():
-            st.header("Modeling")
+            st.header("建立模型")
             if not st.session_state.get("data_prepared", False): 
                 st.session_state.X = st.session_state.df_pca
                 st.session_state.data_prepared = True
@@ -157,7 +157,7 @@ def cluster_model_pipeline(DF, API_KEY, GPT_MODEL):
                 st.session_state["all_set"] = False
 
             if not st.session_state["decided_model"]:
-                with st.spinner("Deciding models based on data..."):
+                with st.spinner("正在根据数据选择模型..."):
                     shape_info = str(st.session_state.X.shape)
                     description_info = st.session_state.X.describe().to_csv()
                     cluster_info = estimate_optimal_clusters(st.session_state.X)
@@ -193,7 +193,7 @@ def cluster_model_pipeline(DF, API_KEY, GPT_MODEL):
             developer_info_static()
 
 def display_results(X):
-    st.success("Models selected based on your data!")
+    st.success("根据数据成功选择模型!")
 
     # Data set metrics
     st.metric(label="Total Data", value=len(X), delta=None)
@@ -207,12 +207,12 @@ def display_results(X):
 
         # Slider for model parameters
         if st.session_state.model_list[0] == 2:
-            st.caption('N-cluster is not applicable to DBSCAN.')
+            st.caption('N-cluster不适用于DBSCAN.')
         else:
             st.caption(f'N-cluster for {st.session_state.model1_name}:')
         n_clusters1 = st.slider('N clusters', 2, 20, st.session_state.default_cluster, label_visibility="collapsed", key='n_clusters1', disabled=st.session_state.model_list[0] == 2)
         
-        with st.spinner("Model training in progress..."):
+        with st.spinner("模型训练进行中..."):
             st.session_state.model1 = train_select_cluster_model(X, n_clusters1, st.session_state.model_list[0])
             st.session_state.downloadable_model1 = save_model(st.session_state.model1)
        
@@ -235,12 +235,12 @@ def display_results(X):
 
         # Slider for model parameters
         if st.session_state.model_list[1] == 2:
-            st.caption('N-cluster is not applicable to DBSCAN.')
+            st.caption('N-cluster不适用于DBSCAN.')
         else:
             st.caption(f'N-cluster for {st.session_state.model2_name}:')
         n_clusters2 = st.slider('N clusters', 2, 20, st.session_state.default_cluster, label_visibility="collapsed", key='n_clusters2', disabled=st.session_state.model_list[1] == 2)
 
-        with st.spinner("Model training in progress..."):
+        with st.spinner("模型训练进行中..."):
             st.session_state.model2 = train_select_cluster_model(X, n_clusters2, st.session_state.model_list[1])
             st.session_state.downloadable_model2 = save_model(st.session_state.model2)
 
@@ -263,12 +263,12 @@ def display_results(X):
 
         # Slider for model parameters
         if st.session_state.model_list[2] == 2:
-            st.caption('N-cluster is not applicable to DBSCAN.')
+            st.caption('N-cluster不适用于DBSCAN.')
         else:
             st.caption(f'N-cluster for {st.session_state.model3_name}:')
         n_clusters3 = st.slider('N clusters', 2, 20, st.session_state.default_cluster, label_visibility="collapsed", key='n_clusters3', disabled=st.session_state.model_list[2] == 2)
 
-        with st.spinner("Model training in progress..."):
+        with st.spinner("模型训练进行中..."):
             st.session_state.model3 = train_select_cluster_model(X, n_clusters3, st.session_state.model_list[2])
             st.session_state.downloadable_model3 = save_model(st.session_state.model3)
 

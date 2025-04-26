@@ -65,7 +65,8 @@ def check_and_balance(X, Y, balance_threshold=0.5, method=1):
         else:
             return X, Y
     except Exception as e:
-        st.error("The target attribute may be continuous. Please check the data type.")
+        # st.error("The target attribute may be continuous. Please check the data type.")
+        st.error("目标属性可能是连续的。请检查数据类型。")
         st.stop()
     
 def estimate_optimal_clusters(df):
